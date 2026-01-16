@@ -3,12 +3,13 @@
 
 import { NextResponse } from 'next/server'
 
-// Credit packages
+// Credit packages (value in cents)
 const PACKAGES = {
-  5: { credits: 500, name: '$5 Credits' },
-  10: { credits: 1000, name: '$10 Credits' },
-  25: { credits: 2500, name: '$25 Credits' },
-  50: { credits: 5000, name: '$50 Credits' },
+  5: { credits: 500, name: '$5 Credits', description: '~165 minutes to US' },
+  10: { credits: 1000, name: '$10 Credits', description: '~330 minutes to US' },
+  25: { credits: 2500, name: '$25 Credits', description: '~830 minutes to US' },
+  50: { credits: 5000, name: '$50 Credits', description: '~1,660 minutes to US' },
+  100: { credits: 10000, name: '$100 Credits', description: '~3,300 minutes to US' },
 }
 
 export async function POST(request) {
@@ -35,10 +36,11 @@ export async function POST(request) {
     const Stripe = require('stripe')
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
-    // Get the app URL (works in Replit)
-    const appUrl = process.env.REPLIT_DEV_DOMAIN 
-      ? `https://${process.env.REPLIT_DEV_DOMAIN}`
-      : 'http://localhost:3000'
+    // Get the app URL
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL 
+      || process.env.VERCEL_URL 
+        ? `https://${process.env.VERCEL_URL}`
+        : 'http://localhost:3000'
 
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
@@ -49,15 +51,15 @@ export async function POST(request) {
             currency: 'usd',
             product_data: {
               name: PACKAGES[amount].name,
-              description: `${PACKAGES[amount].credits / 100} credits for CallBridge`,
+              description: PACKAGES[amount].description,
             },
             unit_amount: amount * 100, // Stripe uses cents
           },
           quantity: 1,
         },
       ],
-      success_url: `${appUrl}?success=true&credits=${PACKAGES[amount].credits}`,
-      cancel_url: `${appUrl}?canceled=true`,
+      success_url: `${appUrl}/app?success=true&credits=${PACKAGES[amount].credits}`,
+      cancel_url: `${appUrl}/app?canceled=true`,
       metadata: {
         credits: PACKAGES[amount].credits.toString(),
       },

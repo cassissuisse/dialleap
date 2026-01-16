@@ -9,24 +9,34 @@
 ## Features
 
 - 📞 **Browser-based calling** — No app downloads, works everywhere
-- ⏱️ **Per-second billing** — Pay for exactly what you use (20-30% savings)
 - 💬 **SMS support** — Send texts worldwide for $0.05 each
 - 🔔 **Callback queue** — We wait on hold, connect you when a human answers
 - 📊 **Smart hold detection** — See estimated wait times before calling
 - 💳 **Credits never expire** — No subscriptions, no monthly fees
-- 🌍 **180+ countries** — Rates from $0.019/min
+- 🌍 **180+ countries** — Rates from $0.03/min
+
+---
+
+## Billing
+
+DialLeap uses **per-minute billing**, rounded up to the nearest minute. This is the industry standard used by most calling services.
+
+**Example:**
+- 45 second call → billed as 1 minute
+- 1 min 15 sec call → billed as 2 minutes
+- 3 min 0 sec call → billed as 3 minutes
 
 ---
 
 ## Why DialLeap?
 
-| Feature | DialLeap | Yadaphone | Google Voice |
+| Feature | DialLeap | YadaPhone | Google Voice |
 |---------|----------|-----------|--------------|
-| Per-second billing | ✅ | ❌ | ❌ |
+| Browser-based | ✅ | ✅ | ❌ |
 | SMS support | ✅ | ❌ | Limited |
 | Callback queue | ✅ | ❌ | ❌ |
 | Hold time estimates | ✅ | ❌ | ❌ |
-| No app needed | ✅ | ✅ | ❌ |
+| Credits never expire | ✅ | ? | N/A |
 | Global availability | ✅ | ✅ | US only |
 
 ---
@@ -63,11 +73,27 @@ See `DEPLOY-GUIDE.md` for full deployment instructions.
 
 ## Pricing
 
-| Package | Price | Minutes to US |
-|---------|-------|---------------|
-| Starter | $5 | ~260 min |
-| Standard | $25 | ~1,300 min |
-| Pro | $100 | ~5,200 min |
+| Package | Price | Minutes to US | Minutes to UK |
+|---------|-------|---------------|---------------|
+| Starter | $5 | ~165 min | ~125 min |
+| Standard | $25 | ~830 min | ~625 min |
+| Pro | $100 | ~3,300 min | ~2,500 min |
+
+**Rates:**
+- US/Canada: $0.03/min
+- UK: $0.04/min (mobile), $0.03/min (landline)
+- Germany/France: $0.05/min (mobile), $0.04/min (landline)
+- See full rate table in the app
+
+---
+
+## Business Model
+
+| Your Rate | Twilio Cost | Your Margin |
+|-----------|-------------|-------------|
+| $0.03/min (US) | ~$0.014/min | ~53% |
+| $0.04/min (UK) | ~$0.02/min | ~50% |
+| $0.05/min (EU) | ~$0.025/min | ~50% |
 
 ---
 

@@ -1,7 +1,8 @@
 'use client'
 
-// app/page.tsx
+// app/app/page.tsx
 // This is the main DialLeap app - everything in one file for simplicity
+// BILLING: Per-minute, rounded UP (industry standard)
 
 import { useState, useEffect, useRef } from 'react'
 
@@ -26,16 +27,17 @@ const DIAL_PAD = [
 ]
 
 // Country codes and rates (cents per minute)
+// These rates give ~40-50% margin over Twilio costs
 const COUNTRIES = {
-  '+1': { name: 'US/Canada', flag: '🇺🇸', rate: 2 },
-  '+44': { name: 'UK', flag: '🇬🇧', rate: 3 },
-  '+49': { name: 'Germany', flag: '🇩🇪', rate: 4 },
-  '+33': { name: 'France', flag: '🇫🇷', rate: 4 },
-  '+81': { name: 'Japan', flag: '🇯🇵', rate: 8 },
-  '+61': { name: 'Australia', flag: '🇦🇺', rate: 5 },
-  '+91': { name: 'India', flag: '🇮🇳', rate: 3 },
-  '+52': { name: 'Mexico', flag: '🇲🇽', rate: 4 },
-  '+55': { name: 'Brazil', flag: '🇧🇷', rate: 6 },
+  '+1': { name: 'US/Canada', flag: '🇺🇸', rate: 3 },      // Twilio: ~1.4¢
+  '+44': { name: 'UK', flag: '🇬🇧', rate: 4 },            // Twilio: ~2¢
+  '+49': { name: 'Germany', flag: '🇩🇪', rate: 5 },       // Twilio: ~2.5¢
+  '+33': { name: 'France', flag: '🇫🇷', rate: 5 },        // Twilio: ~2.5¢
+  '+81': { name: 'Japan', flag: '🇯🇵', rate: 10 },        // Twilio: ~5¢
+  '+61': { name: 'Australia', flag: '🇦🇺', rate: 6 },     // Twilio: ~3¢
+  '+91': { name: 'India', flag: '🇮🇳', rate: 4 },         // Twilio: ~2¢
+  '+52': { name: 'Mexico', flag: '🇲🇽', rate: 5 },        // Twilio: ~2.5¢
+  '+55': { name: 'Brazil', flag: '🇧🇷', rate: 8 },        // Twilio: ~4¢
 }
 
 // Known numbers with hold time info
@@ -98,7 +100,7 @@ export default function DialLeap() {
         return { code, ...info }
       }
     }
-    return { code: '', name: 'Unknown', flag: '🌍', rate: 10 }
+    return { code: '', name: 'Unknown', flag: '🌍', rate: 15 }
   }
 
   // Check if number is a known number
@@ -117,6 +119,12 @@ export default function DialLeap() {
   // Format credits as dollars
   const formatCredits = (cents) => {
     return `$${(cents / 100).toFixed(2)}`
+  }
+
+  // Calculate billed minutes (rounded UP)
+  const getBilledMinutes = (seconds) => {
+    if (seconds === 0) return 0
+    return Math.ceil(seconds / 60)
   }
 
   // Current rate based on number
@@ -182,7 +190,9 @@ export default function DialLeap() {
 
   // End a call
   const handleEndCall = () => {
-    const cost = Math.ceil((callDuration / 60) * currentRate)
+    // BILLING: Round up to nearest minute
+    const billedMinutes = getBilledMinutes(callDuration)
+    const cost = billedMinutes * currentRate
     
     // Deduct credits
     setCredits(prev => Math.max(0, prev - cost))
@@ -193,6 +203,7 @@ export default function DialLeap() {
       number: number,
       country: currentCountry.flag,
       duration: callDuration,
+      billedMinutes: billedMinutes,
       cost: cost,
       date: new Date().toLocaleDateString()
     }, ...prev.slice(0, 19)])
@@ -361,6 +372,9 @@ export default function DialLeap() {
                           {formatDuration(callDuration)}
                         </p>
                         <p className="text-sm text-muted">{number}</p>
+                        <p className="text-xs text-zinc-500 mt-1">
+                          Billed: {getBilledMinutes(callDuration)} min
+                        </p>
                       </div>
                     </div>
                   ) : callState === 'dialing' ? (
@@ -374,6 +388,9 @@ export default function DialLeap() {
                     <div>
                       <p className="text-sm text-muted mb-2">Call ended</p>
                       <p className="number-display text-light">{formatDuration(callDuration)}</p>
+                      <p className="text-xs text-zinc-500 mt-1">
+                        Billed: {getBilledMinutes(callDuration)} min
+                      </p>
                     </div>
                   ) : (
                     <div style={{ minHeight: 80, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -470,7 +487,7 @@ export default function DialLeap() {
                           <div>
                             <p className="font-medium text-sm">{call.number}</p>
                             <p className="text-xs text-muted">
-                              {call.date} · {formatDuration(call.duration)}
+                              {call.date} · {formatDuration(call.duration)} ({call.billedMinutes} min billed)
                             </p>
                           </div>
                         </div>
@@ -488,7 +505,7 @@ export default function DialLeap() {
 
         {/* Footer */}
         <p className="text-center text-xs text-muted mt-6">
-          Rates from $0.02/min · 180+ countries · Credits never expire
+          Rates from $0.03/min · 180+ countries · Credits never expire
         </p>
       </div>
 
@@ -505,7 +522,7 @@ export default function DialLeap() {
                   className={`topup-btn ${amount === 25 ? 'popular' : ''}`}
                 >
                   <p style={{ fontSize: 24, fontWeight: 700, color: 'white' }}>${amount}</p>
-                  <p className="text-xs text-light">~{Math.floor(amount / 0.02)} min to US</p>
+                  <p className="text-xs text-light">~{Math.floor(amount / 0.03)} min to US</p>
                   {amount === 25 && (
                     <p className="text-xs" style={{ color: '#a7f3d0', marginTop: 4 }}>Most Popular</p>
                   )}

@@ -3,26 +3,26 @@
 // ============================================================
 // DIALLEAP - LANDING PAGE
 // SEO-optimized, conversion-focused landing page
-// Better than Yadaphone with unique differentiators
+// BILLING: Per-minute (industry standard, rounded up)
 // ============================================================
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
-// SEO-targeted country rates
+// SEO-targeted country rates (cents per minute, ~40-50% margin over Twilio)
 const RATES = [
-  { country: 'United States', flag: '🇺🇸', code: '+1', mobile: '0.019', landline: '0.019' },
-  { country: 'United Kingdom', flag: '🇬🇧', code: '+44', mobile: '0.029', landline: '0.020' },
-  { country: 'Germany', flag: '🇩🇪', code: '+49', mobile: '0.035', landline: '0.025' },
-  { country: 'France', flag: '🇫🇷', code: '+33', mobile: '0.035', landline: '0.025' },
-  { country: 'Canada', flag: '🇨🇦', code: '+1', mobile: '0.019', landline: '0.019' },
-  { country: 'Australia', flag: '🇦🇺', code: '+61', mobile: '0.045', landline: '0.035' },
-  { country: 'India', flag: '🇮🇳', code: '+91', mobile: '0.025', landline: '0.020' },
-  { country: 'Japan', flag: '🇯🇵', code: '+81', mobile: '0.070', landline: '0.055' },
-  { country: 'Mexico', flag: '🇲🇽', code: '+52', mobile: '0.035', landline: '0.025' },
-  { country: 'Brazil', flag: '🇧🇷', code: '+55', mobile: '0.055', landline: '0.040' },
-  { country: 'Spain', flag: '🇪🇸', code: '+34', mobile: '0.035', landline: '0.025' },
-  { country: 'Italy', flag: '🇮🇹', code: '+39', mobile: '0.035', landline: '0.025' },
+  { country: 'United States', flag: '🇺🇸', code: '+1', mobile: '0.03', landline: '0.03' },
+  { country: 'Canada', flag: '🇨🇦', code: '+1', mobile: '0.03', landline: '0.03' },
+  { country: 'United Kingdom', flag: '🇬🇧', code: '+44', mobile: '0.04', landline: '0.03' },
+  { country: 'Germany', flag: '🇩🇪', code: '+49', mobile: '0.05', landline: '0.04' },
+  { country: 'France', flag: '🇫🇷', code: '+33', mobile: '0.05', landline: '0.04' },
+  { country: 'Australia', flag: '🇦🇺', code: '+61', mobile: '0.06', landline: '0.05' },
+  { country: 'India', flag: '🇮🇳', code: '+91', mobile: '0.04', landline: '0.03' },
+  { country: 'Japan', flag: '🇯🇵', code: '+81', mobile: '0.10', landline: '0.08' },
+  { country: 'Mexico', flag: '🇲🇽', code: '+52', mobile: '0.05', landline: '0.04' },
+  { country: 'Brazil', flag: '🇧🇷', code: '+55', mobile: '0.08', landline: '0.06' },
+  { country: 'Spain', flag: '🇪🇸', code: '+34', mobile: '0.05', landline: '0.04' },
+  { country: 'Italy', flag: '🇮🇹', code: '+39', mobile: '0.05', landline: '0.04' },
 ]
 
 // Testimonials for social proof
@@ -42,7 +42,7 @@ const TESTIMONIALS = [
   {
     name: 'Elena R.',
     role: 'Expat in Germany',
-    text: 'Per-second billing means I actually pay for what I use. No more rounding up to the nearest minute.',
+    text: 'So simple to use. No apps to install, just open the browser and call. My parents love it.',
     rating: 5,
   },
 ]
@@ -55,7 +55,7 @@ const FAQS = [
   },
   {
     q: 'Is DialLeap a good Skype alternative?',
-    a: 'Yes! DialLeap was built specifically to replace Skype for international calling. Unlike Skype, we offer per-second billing, SMS support, and innovative features like callback queue for long hold times. Many former Skype users have switched to DialLeap.',
+    a: 'Yes! DialLeap was built specifically to replace Skype for international calling. We offer competitive rates, SMS support, and innovative features like callback queue for long hold times. Many former Skype users have switched to DialLeap.',
   },
   {
     q: 'What countries can I call with DialLeap?',
@@ -67,7 +67,7 @@ const FAQS = [
   },
   {
     q: 'How is billing calculated?',
-    a: 'Unlike competitors who round up to the nearest minute, DialLeap bills per second. A 1 minute 15 second call is charged for exactly 75 seconds, not 2 minutes. This typically saves users 20-30% on their calling costs.',
+    a: 'DialLeap bills per minute, rounded up to the nearest minute. This is the industry standard used by most calling services. For example, a 1 minute 15 second call is billed as 2 minutes.',
   },
   {
     q: 'Can I send SMS messages?',
@@ -75,7 +75,7 @@ const FAQS = [
   },
   {
     q: 'What is the Callback Queue feature?',
-    a: 'Our exclusive Callback Queue lets you avoid waiting on hold. We call the number, wait on hold for you, and connect you when a human answers. Perfect for calling the IRS, airlines, or any business with long hold times. Just $0.50 flat fee.',
+    a: 'Our Callback Queue lets you avoid waiting on hold. We call the number, wait on hold for you, and connect you when a human answers. Perfect for calling the IRS, airlines, or any business with long hold times. Just $0.50 flat fee.',
   },
   {
     q: 'Do my credits expire?',
@@ -170,7 +170,7 @@ export default function LandingPage() {
           {/* Subheadline */}
           <p className="text-xl md:text-2xl text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed">
             The best <strong className="text-white">Skype alternative</strong> for cheap international calls. 
-            No apps. No subscriptions. Just <strong className="text-emerald-400">$0.019/min</strong> to the US.
+            No apps. No subscriptions. Just <strong className="text-emerald-400">$0.03/min</strong> to the US.
           </p>
 
           {/* CTA buttons */}
@@ -202,7 +202,7 @@ export default function LandingPage() {
               <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
-              <span>Per-second billing</span>
+              <span>No app download</span>
             </div>
             <div className="flex items-center gap-2">
               <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -260,21 +260,21 @@ export default function LandingPage() {
               Why Choose <span className="text-emerald-400">DialLeap</span>?
             </h2>
             <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
-              Built for the post-Skype era. Everything you loved, plus features you didn't know you needed.
+              Built for the post-Skype era. Simple, reliable, and affordable international calling.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Feature 1: Per-Second Billing */}
+            {/* Feature 1: Browser-Based */}
             <div className="group p-8 rounded-3xl bg-gradient-to-br from-white/[0.05] to-transparent border border-white/5 hover:border-emerald-500/30 transition-all">
               <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <svg className="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold mb-3">Per-Second Billing</h3>
+              <h3 className="text-xl font-bold mb-3">100% Browser-Based</h3>
               <p className="text-zinc-400 leading-relaxed">
-                Pay for exactly what you use. A 1:15 call costs 75 seconds, not 2 minutes. <strong className="text-white">Save 20-30%</strong> vs competitors who round up.
+                No downloads, no apps, no SIM cards. Works on <strong className="text-white">any device</strong> with a browser. Start calling in under 60 seconds.
               </p>
             </div>
 
@@ -292,7 +292,7 @@ export default function LandingPage() {
             </div>
 
             {/* Feature 3: Callback Queue */}
-            <div className="group p-8 rounded-3xl bg-gradient-to-br from-amber-500/[0.08] to-transparent border border-amber-500/10 hover:border-amber-500/30 transition-all">
+            <div className="group p-8 rounded-3xl bg-gradient-to-br from-amber-500/[0.08] to-transparent border border-amber-500/10 hover:border-amber-500/30 transition-all relative">
               <div className="absolute top-4 right-4 px-2 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-bold">
                 EXCLUSIVE
               </div>
@@ -320,16 +320,16 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Feature 5: No App Needed */}
+            {/* Feature 5: Cheap Rates */}
             <div className="group p-8 rounded-3xl bg-gradient-to-br from-white/[0.05] to-transparent border border-white/5 hover:border-violet-500/30 transition-all">
               <div className="w-14 h-14 rounded-2xl bg-violet-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <svg className="w-7 h-7 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold mb-3">100% Browser-Based</h3>
+              <h3 className="text-xl font-bold mb-3">Affordable Rates</h3>
               <p className="text-zinc-400 leading-relaxed">
-                No downloads, no apps, no SIM cards. Works on <strong className="text-white">any device</strong> with a browser. Start calling in under 60 seconds.
+                Call the US for just <strong className="text-white">$0.03/min</strong>. Way cheaper than your phone carrier. Transparent pricing to 180+ countries.
               </p>
             </div>
 
@@ -337,7 +337,7 @@ export default function LandingPage() {
             <div className="group p-8 rounded-3xl bg-gradient-to-br from-white/[0.05] to-transparent border border-white/5 hover:border-rose-500/30 transition-all">
               <div className="w-14 h-14 rounded-2xl bg-rose-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <svg className="w-7 h-7 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <h3 className="text-xl font-bold mb-3">Credits Never Expire</h3>
@@ -368,13 +368,13 @@ export default function LandingPage() {
               <div className="flex items-baseline gap-1 mb-4">
                 <span className="text-5xl font-bold">$5</span>
               </div>
-              <p className="text-zinc-500 mb-6">~260 minutes to US</p>
+              <p className="text-zinc-500 mb-6">~165 minutes to US</p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-3 text-zinc-300">
                   <svg className="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Per-second billing
+                  180+ countries
                 </li>
                 <li className="flex items-center gap-3 text-zinc-300">
                   <svg className="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -403,7 +403,7 @@ export default function LandingPage() {
               <div className="flex items-baseline gap-1 mb-4">
                 <span className="text-5xl font-bold">$25</span>
               </div>
-              <p className="text-zinc-500 mb-6">~1,300 minutes to US</p>
+              <p className="text-zinc-500 mb-6">~830 minutes to US</p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-3 text-zinc-300">
                   <svg className="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -435,7 +435,7 @@ export default function LandingPage() {
               <div className="flex items-baseline gap-1 mb-4">
                 <span className="text-5xl font-bold">$100</span>
               </div>
-              <p className="text-zinc-500 mb-6">~5,200 minutes to US</p>
+              <p className="text-zinc-500 mb-6">~3,300 minutes to US</p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-3 text-zinc-300">
                   <svg className="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -447,13 +447,13 @@ export default function LandingPage() {
                   <svg className="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Team sharing
+                  Unlimited callback queue
                 </li>
                 <li className="flex items-center gap-3 text-zinc-300">
                   <svg className="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Analytics dashboard
+                  Call analytics
                 </li>
               </ul>
               <Link href="/app" className="block w-full py-3 rounded-xl border border-white/10 text-center font-semibold hover:bg-white/5 transition-colors">
@@ -472,7 +472,7 @@ export default function LandingPage() {
               International Calling Rates
             </h2>
             <p className="text-xl text-zinc-400">
-              Transparent pricing to 180+ countries. No connection fees.
+              Transparent pricing to 180+ countries. No connection fees. Billed per minute.
             </p>
           </div>
 
@@ -596,7 +596,7 @@ export default function LandingPage() {
             Ready to Make Your First Call?
           </h2>
           <p className="text-xl text-zinc-400 mb-10">
-            Start with a free call. No credit card required.
+            Start with $5 in free credits. No credit card required.
           </p>
           <Link
             href="/app"
@@ -624,7 +624,7 @@ export default function LandingPage() {
                 <span className="text-xl font-bold">DialLeap</span>
               </div>
               <p className="text-zinc-500 text-sm leading-relaxed">
-                The best Skype alternative for international calls. Browser-based, per-second billing, credits never expire.
+                The best Skype alternative for international calls. Browser-based, affordable rates, credits never expire.
               </p>
             </div>
             <div>
@@ -655,7 +655,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-zinc-500 text-sm">© 2026 DialLeap. All rights reserved.</p>
+            <p className="text-zinc-500 text-sm">© 2025 DialLeap. All rights reserved.</p>
             <p className="text-zinc-500 text-sm">Made with ❤️ for the post-Skype world</p>
           </div>
         </div>

@@ -1,6 +1,7 @@
 -- =============================================
 -- DIALLEAP DATABASE SCHEMA
 -- Run this in your Supabase SQL Editor
+-- BILLING: Per-minute, rounded up
 -- =============================================
 
 -- Users table
@@ -11,12 +12,13 @@ CREATE TABLE IF NOT EXISTS profiles (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Call history (with per-second billing support)
+-- Call history (with per-minute billing)
 CREATE TABLE IF NOT EXISTS calls (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
   to_number TEXT NOT NULL,
   duration_seconds INTEGER DEFAULT 0,
+  billed_minutes INTEGER DEFAULT 0,  -- Rounded up minutes
   cost_cents INTEGER DEFAULT 0,
   rate_cents_per_min INTEGER NOT NULL,
   status TEXT DEFAULT 'completed',
@@ -29,7 +31,7 @@ CREATE TABLE IF NOT EXISTS sms_messages (
   user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
   to_number TEXT NOT NULL,
   body TEXT NOT NULL,
-  cost_cents INTEGER DEFAULT 5,
+  cost_cents INTEGER DEFAULT 5,  -- $0.05 per SMS
   status TEXT DEFAULT 'sent',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -40,19 +42,19 @@ CREATE TABLE IF NOT EXISTS callback_queue (
   user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
   target_number TEXT NOT NULL,
   target_name TEXT,
-  status TEXT DEFAULT 'pending',
-  cost_cents INTEGER DEFAULT 50,
+  status TEXT DEFAULT 'pending',  -- pending, waiting, connected, completed, failed
+  cost_cents INTEGER DEFAULT 50,  -- $0.50 flat fee
   hold_duration_seconds INTEGER,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   connected_at TIMESTAMPTZ
 );
 
--- Known numbers database
+-- Known numbers database (for hold time estimates)
 CREATE TABLE IF NOT EXISTS known_numbers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   phone_number TEXT UNIQUE NOT NULL,
   name TEXT NOT NULL,
-  category TEXT,
+  category TEXT,  -- government, airline, bank, etc.
   avg_hold_seconds INTEGER,
   best_call_times JSONB,
   tips TEXT
@@ -72,6 +74,7 @@ CREATE TABLE IF NOT EXISTS purchases (
 -- FUNCTIONS
 -- =============================================
 
+-- Add credits to user account
 CREATE OR REPLACE FUNCTION add_credits(p_user_id UUID, p_amount INTEGER)
 RETURNS INTEGER
 LANGUAGE plpgsql
@@ -88,6 +91,7 @@ BEGIN
 END;
 $$;
 
+-- Deduct credits from user account
 CREATE OR REPLACE FUNCTION deduct_credits(p_user_id UUID, p_amount INTEGER)
 RETURNS INTEGER
 LANGUAGE plpgsql
@@ -104,6 +108,53 @@ BEGIN
 END;
 $$;
 
+-- Calculate billed minutes (rounded UP)
+CREATE OR REPLACE FUNCTION calculate_billed_minutes(duration_seconds INTEGER)
+RETURNS INTEGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  IF duration_seconds = 0 THEN
+    RETURN 0;
+  END IF;
+  RETURN CEIL(duration_seconds::NUMERIC / 60);
+END;
+$$;
+
+-- Record a completed call and deduct credits
+CREATE OR REPLACE FUNCTION record_call(
+  p_user_id UUID,
+  p_to_number TEXT,
+  p_duration_seconds INTEGER,
+  p_rate_cents_per_min INTEGER
+)
+RETURNS TABLE(call_id UUID, billed_minutes INTEGER, cost_cents INTEGER, new_balance INTEGER)
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  v_call_id UUID;
+  v_billed_minutes INTEGER;
+  v_cost_cents INTEGER;
+  v_new_balance INTEGER;
+BEGIN
+  -- Calculate billing
+  v_billed_minutes := calculate_billed_minutes(p_duration_seconds);
+  v_cost_cents := v_billed_minutes * p_rate_cents_per_min;
+  
+  -- Insert call record
+  INSERT INTO calls (user_id, to_number, duration_seconds, billed_minutes, cost_cents, rate_cents_per_min)
+  VALUES (p_user_id, p_to_number, p_duration_seconds, v_billed_minutes, v_cost_cents, p_rate_cents_per_min)
+  RETURNING id INTO v_call_id;
+  
+  -- Deduct credits
+  v_new_balance := deduct_credits(p_user_id, v_cost_cents);
+  
+  RETURN QUERY SELECT v_call_id, v_billed_minutes, v_cost_cents, v_new_balance;
+END;
+$$;
+
+-- Auto-create profile on user signup
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER
 LANGUAGE plpgsql
@@ -132,15 +183,26 @@ ALTER TABLE callback_queue ENABLE ROW LEVEL SECURITY;
 ALTER TABLE purchases ENABLE ROW LEVEL SECURITY;
 ALTER TABLE known_numbers ENABLE ROW LEVEL SECURITY;
 
+-- Profiles: users can only see/update their own
 CREATE POLICY "Users can view own profile" ON profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
+
+-- Calls: users can only see/insert their own
 CREATE POLICY "Users can view own calls" ON calls FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can insert own calls" ON calls FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- SMS: users can only see/insert their own
 CREATE POLICY "Users can view own SMS" ON sms_messages FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can insert own SMS" ON sms_messages FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Callback queue: users can only see/insert their own
 CREATE POLICY "Users can view own callbacks" ON callback_queue FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can insert own callbacks" ON callback_queue FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Purchases: users can only see their own
 CREATE POLICY "Users can view own purchases" ON purchases FOR SELECT USING (auth.uid() = user_id);
+
+-- Known numbers: anyone can read (public info)
 CREATE POLICY "Anyone can view known numbers" ON known_numbers FOR SELECT USING (true);
 
 -- =============================================

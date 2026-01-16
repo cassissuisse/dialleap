@@ -29,7 +29,7 @@ export async function POST(request) {
       // TwiML that connects the call
       twiml: `
         <Response>
-          <Say>Connecting your call through CallBridge.</Say>
+          <Say>Connecting your call through DialLeap.</Say>
           <Dial>${to}</Dial>
         </Response>
       `

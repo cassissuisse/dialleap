@@ -1,5 +1,6 @@
 // app/layout.tsx
 // SEO-optimized root layout with schema markup
+// UPDATED: Per-minute billing, corrected rates
 
 import './globals.css'
 
@@ -10,7 +11,7 @@ export const metadata = {
     default: 'DialLeap - Cheap International Calls From Your Browser | Skype Alternative',
     template: '%s | DialLeap',
   },
-  description: 'Make cheap international calls from your browser. No apps, no subscriptions. Per-second billing from $0.019/min to US. The best Skype alternative with SMS support and callback queue.',
+  description: 'Make cheap international calls from your browser. No apps, no subscriptions. From $0.03/min to US. The best Skype alternative with SMS support and callback queue.',
   keywords: [
     'international calls',
     'cheap international calling',
@@ -42,7 +43,7 @@ export const metadata = {
     url: 'https://dialleap.com',
     siteName: 'DialLeap',
     title: 'DialLeap - Cheap International Calls From Your Browser',
-    description: 'Make cheap international calls from your browser. No apps, no subscriptions. Per-second billing from $0.019/min. The best Skype alternative.',
+    description: 'Make cheap international calls from your browser. No apps, no subscriptions. From $0.03/min. The best Skype alternative.',
     images: [
       {
         url: '/og-image.png',
@@ -55,7 +56,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'DialLeap - Cheap International Calls From Your Browser',
-    description: 'Make cheap international calls from your browser. No apps, no subscriptions. Per-second billing from $0.019/min.',
+    description: 'Make cheap international calls from your browser. No apps, no subscriptions. From $0.03/min.',
     images: ['/og-image.png'],
     creator: '@dialleap',
   },
@@ -138,7 +139,7 @@ const jsonLd = {
           name: 'Is DialLeap a good Skype alternative?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Yes! DialLeap was built specifically to replace Skype for international calling. Unlike Skype, we offer per-second billing, SMS support, and innovative features like callback queue for long hold times.',
+            text: 'Yes! DialLeap was built specifically to replace Skype for international calling. We offer competitive rates starting at $0.03/min to the US, SMS support, and innovative features like callback queue for long hold times.',
           },
         },
         {
@@ -162,7 +163,7 @@ const jsonLd = {
           name: 'How is billing calculated?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Unlike competitors who round up to the nearest minute, DialLeap bills per second. A 1 minute 15 second call is charged for exactly 75 seconds, not 2 minutes.',
+            text: 'DialLeap bills per minute, rounded up to the nearest minute. This is the industry standard. For example, a 1 minute 15 second call is billed as 2 minutes.',
           },
         },
         {
